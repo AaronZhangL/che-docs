@@ -208,7 +208,7 @@ The `-v /var/run/docker.sock:/var/run/docker.sock` syntax is for mounting a Unix
 
 However, peculiarities of file systems and permissions may make it impossible to invoke Docker processes from inside a container. If this happens, the Che startup scripts will print an error about not being able to reach the Docker daemon with guidance on how to resolve the issue.
 
-An alternative solution is to run Docker daemon in TCP mode on the host and export `DOCKER_HOST` environment variable in the container.  You can tell the Docker daemon to listen on both Unix sockets and TCP.  On the host running the Docker daemon:
+An alternative solution is to run Docker daemon in TCP mode on the host and export `{{site.data.env["DOCKER_HOST"]}}` environment variable in the container.  You can tell the Docker daemon to listen on both Unix sockets and TCP.  On the host running the Docker daemon:
 
 ```text  
 # Set this environment variable and restart the Docker daemon
@@ -218,7 +218,7 @@ DOCKER_OPTS=" -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock"
 http://localhost:2375/containers/json
 ```
 
-Having verified that your Docker daemon is listening, run the Che container with the with `DOCKER_HOST` environment variable set to the IP address of `docker0` or `eth0` network interface. If `docker0` is running on 1.1.1.1 then:
+Having verified that your Docker daemon is listening, run the Che container with the with `{{site.data.env["DOCKER_HOST"]}}` environment variable set to the IP address of `docker0` or `eth0` network interface. If `docker0` is running on 1.1.1.1 then:
 
 ```shell  
 docker run -p:8080:8080 \
@@ -229,7 +229,7 @@ docker run -p:8080:8080 \
            -v /C/conf:/conf \
            -v /home/my_assembly:/assembly \
            -e DOCKER_MACHINE_HOST=172.17.0.1 \
-           -e DOCKER_HOST=tcp://1.1.1.1:2375 \
+           -e {{site.data.env["DOCKER_HOST"]}}=tcp://1.1.1.1:2375 \
            eclipse/che-server:5.0.0-latest
 ```
 

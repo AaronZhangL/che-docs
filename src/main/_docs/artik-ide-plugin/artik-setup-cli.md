@@ -17,7 +17,7 @@ MANDATORY DOCKER PARAMETERS:
   -v <LOCAL_PATH>:/data                Where user, instance, and log data saved
 
 OPTIONAL DOCKER PARAMETERS:
-  -e CHE_HOST=<YOUR_HOST>              IP address or hostname where che will serve its users
+  -e {{site.data.env["HOST"]}}=<YOUR_HOST>              IP address or hostname where che will serve its users
   -e CHE_PORT=<YOUR_PORT>              Port where artik will bind itself to
   -v <LOCAL_PATH>:/data/instance       Where instance, user, log data will be saved
   -v <LOCAL_PATH>:/data/backup         Where backup files will be saved
@@ -77,7 +77,7 @@ Used to download Docker images that will be stored in your Docker images reposit
 `download` is invoked by `artik init` before initialization to download images for the version specified by `codenvy/artik-cli:<version>`.
 
 ### info
-Displays system state and debugging information. `--network` runs a test to take your `CHE_HOST` value to test for networking connectivity simulating browser > ARTIK and ARTIK > workspace connectivity.
+Displays system state and debugging information. `--network` runs a test to take your `{{site.data.env["HOST"]}}` value to test for networking connectivity simulating browser > ARTIK and ARTIK > workspace connectivity.
 
 ### init
 Initializes an empty directory with an ARTIK configuration and instance folder where user data and runtime configuration will be stored. You must provide a `<path>:/data` volume mount, then ARTIK creates a `instance` and `backup` subfolder of `<path>`. You can optionally override the location of `instance` by volume mounting an additional local folder to `/data/instance`. You can optionally override the location of where backups are stored by volume mounting an additional local folder to `/data/backup`.  After initialization, an `artik.env` file is placed into the root of the path that you mounted to `/data`.
@@ -86,7 +86,7 @@ These variables can be set in your local environment shell before running and th
 
 | Variable | Description |
 |----------|-------------|
-| `CHE_HOST` | The IP address or DNS name of the ARTIK service. We use `eclipse/che-ip` to attempt discovery if not set. |
+| `{{site.data.env["HOST"]}}` | The IP address or DNS name of the ARTIK service. We use `eclipse/che-ip` to attempt discovery if not set. |
 | `CHE_PORT` | The port the ARTIK server will run on and expose in its container for your clients to connect to. |
 
 ARTIK depends upon Docker images. We use Docker images to:

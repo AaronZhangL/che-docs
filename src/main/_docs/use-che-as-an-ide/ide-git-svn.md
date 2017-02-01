@@ -76,7 +76,7 @@ export CHE_PROPERTY_oauth_github_clientid=yourClientID
 export CHE_PROPERTY_oauth_github_clientsecret=yourClientSecret
 export CHE_PROPERTY_oauth_github_authuri= https://github.com/login/oauth/authorize
 export CHE_PROPERTY_oauth_github_tokenuri= https://github.com/login/oauth/access_token
-export CHE_PROPERTY_oauth_github_redirecturis= http://${CHE_HOST_IP}:${SERVER_PORT}/wsmaster/api/oauth/callback
+export CHE_PROPERTY_oauth_github_redirecturis= http://${{{site.data.env["HOST"]}}_IP}:${SERVER_PORT}/wsmaster/api/oauth/callback
 #Optionally save the enviroment variables above using the CLI.
 #che profile add <profile-name>
 #che profile set <profile-name>

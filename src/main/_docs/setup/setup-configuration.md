@@ -136,20 +136,20 @@ There are two locations that files in your Che source repository will be used in
 To activate jpda suspend mode for debugging Che server initialization, in the `che.env`:
 
 ```
-CHE_DEBUG_SUSPEND=true
+{{site.data.env["DEBUG_SUSPEND"]}}=true
 ```
 
 To change che debug port, in the `che.env`:
 
 ```
-CHE_DEBUG_PORT=8000
+{{site.data.env["DEBUG_PORT"]}}=8000
 ```
 
 # Hostname
 The IP address or DNS name of where the Che endpoint will service your users. If you are running this on a local system, we auto-detect this value as the IP address of your Docker daemon. On many systems, especially those from cloud hosters like DigitalOcean, you may have to explicitly set this to the external IP address or DNS entry provided by the provider. You can edit this value in `che.env` and restart Che, or you can pass it during initialization:
 
 ```
-docker run <OTHER-DOCKER_OPTIONS> -e CHE_HOST=<ip-addr-or-dns> eclipse/che:<version> start
+docker run <OTHER-DOCKER_OPTIONS> -e {{site.data.env["HOST"]}}=<ip-addr-or-dns> eclipse/che:<version> start
 ```
 
 # Workspace Limits
@@ -168,14 +168,14 @@ If your stack images that Che wants to pull require authenticated access to any 
 In `che.env`:
 
 ```
-CHE_DOCKER_REGISTRY_AUTH_REGISTRY1_URL=url1
-CHE_DOCKER_REGISTRY_AUTH_REGISTRY1_USERNAME=username1
-CHE_DOCKER_REGISTRY_AUTH_REGISTRY1_PASSWORD=password1
+{{site.data.env["DOCKER_REGISTRY"]}}_AUTH_REGISTRY1_URL=url1
+{{site.data.env["{{site.data.env["DOCKER_REGISTRY"]}}_AUTH_REGISTRY1_USERNAME"]}}=username1
+{{site.data.env["{{site.data.env["DOCKER_REGISTRY"]}}_AUTH_REGISTRY1_PASSWORD"]}}=password1
 
-CHE_DOCKER_REGISTRY_AWS_REGISTRY1_ID=id1
-CHE_DOCKER_REGISTRY_AWS_REGISTRY1_REGION=region1
-CHE_DOCKER_REGISTRY_AWS_REGISTRY1_ACCESS__KEY__ID=key_id1
-CHE_DOCKER_REGISTRY_AWS_REGISTRY1_SECRET__ACCESS__KEY=secret1
+{{site.data.env["{{site.data.env["DOCKER_REGISTRY"]}}_AWS_REGISTRY1_ID"]}}=id1
+{{site.data.env["{{site.data.env["DOCKER_REGISTRY"]}}_AWS_REGISTRY1_REGION"]}}=region1
+{{site.data.env["{{site.data.env["DOCKER_REGISTRY"]}}_AWS_REGISTRY1_ACCESS__KEY__ID"]}}=key_id1
+{{site.data.env["{{site.data.env["DOCKER_REGISTRY"]}}_AWS_REGISTRY1_SECRET__ACCESS__KEY"]}}=secret1
 ```
 
 There are different configurations for AWS EC2 and the Docker regsitry. You can define as many different registries as you'd like, using the numerical indicator in the environment variable. In case of adding several registries just copy set of properties and append `REGISTRY[n]` for each variable.
@@ -199,11 +199,11 @@ You can configure auto-snapshot and auto-restore behaviors by modifiyng the [`ch
 ```shell
 # During the stop of the workspace automatically creates a snapshot if the value is {true},
 # Otherwise just stops the workspace.
-CHE_WORKSPACE_AUTO__SNAPSHOT=false
+{{site.data.env["{{site.data.env["WORKSPACE_AUTO__SNAPSHOT"]}}"]}}=false
 
 # During the start of the workspace automatically restore it from a snapshot if the value is {true},
 # Otherwise create a new workspace.
-CHE_WORKSPACE_AUTO__RESTORE=false
+{{site.data.env["WORKSPACE_AUTO__RESTORE"]}}=false
 ```
 
 ### Using Snapshots with Private Registries
@@ -211,18 +211,18 @@ The default configuration of workspace snapshots is to save to local disk but yo
 
 ```shell
 # Use a Docker registry for workspace snapshots. If false, snaps are saved to disk.
-CHE_DOCKER_REGISTRY__FOR__SNAPSHOTS=false
+{{site.data.env["{{site.data.env["DOCKER_REGISTRY"]}}__FOR__SNAPSHOTS"]}}=false
 
 # Registry snapshot namespace
-CHE_DOCKER_NAMESPACE=NULL
+{{site.data.env["DOCKER_NAMESPACE"]}}=NULL
 ```
 
 ### Save Workspace Snapshots in a Private Registry
 The default configuration for workspace snapshots is to have them written to disk as TAR files. This is faster, but not centralized. You can have workspace snapshots saved in a private registry instead. In `che.env`:
 
 ```
-CHE_DOCKER_REGISTRY__FOR__SNAPSHOTS=true
-CHE_DOCKER_REGISTRY=<registry-url>
+{{site.data.env["{{site.data.env["DOCKER_REGISTRY"]}}__FOR__SNAPSHOTS"]}}=true
+{{site.data.env["DOCKER_REGISTRY"]}}=<registry-url>
 ```
 
 ## Custom Dockerfiles and Composefiles for Workspaces
@@ -240,7 +240,7 @@ By default, Che workspaces powered by a Docker container are not configured with
 
 ```shell
 # Update your che.env:
-CHE_DOCKER_PRIVILEGED_MODE=true
+{{site.data.env["DOCKER_PRIVILEGED"]}}_MODE=true
 ```
 
 ## Mirroring Docker Hub  
@@ -287,23 +287,23 @@ Che goes through a progression algorithm to establish the protocol, IP address a
 #
 # Che Server --> Docker Daemon Progression:
 #    1. Use the value of che.docker.daemon_url
-#    2. Else, use the value of DOCKER_HOST system variable
+#    2. Else, use the value of {{site.data.env["DOCKER_HOST"]}} system variable
 #    3. Else, use Unix socket over unix:///var/run/docker.sock
 #
 # Che Server --> Workspace Connection (see Workspace Address Resolution Strategy, below):
-#    - If CHE_DOCKER_SERVER__EVALUATION__STRATEGY is 'default':
+#    - If {{site.data.env["DOCKER_SERVER__EVALUATION__STRATEGY"]}} is 'default':
 #        1. Use the value of che.docker.ip
 #        2. Else, use address of docker0 bridge network, if available
 #        3. Else, if server connects over Unix socket, then use localhost
-#        4. Else, use DOCKER_HOST
-#    - If CHE_DOCKER_SERVER__EVALUATION__STRATEGY is 'docker-local':
+#        4. Else, use {{site.data.env["DOCKER_HOST"]}}
+#    - If {{site.data.env["DOCKER_SERVER__EVALUATION__STRATEGY"]}} is 'docker-local':
 #        1. Use the address of the workspace container within the docker network
 #        2. If address cannot be read, use steps 3 and 4 from the default strategy. 
 #
 # Browser --> Workspace Connection:
 #    1. Use the value of che.docker.ip
 #    2. Else, if server connects over Unix socket, then use localhost
-#    3. Else, use DOCKER_HOST
+#    3. Else, use {{site.data.env["DOCKER_HOST"]}}
 #
 # Workspace Agent --> Che Server
 #    1. Default is http://che-host:${SERVER_PORT}/wsmaster/api, where che-host is IP of server.
@@ -339,9 +339,9 @@ docker exec -ti <che-container-name> curl http://<workspace-container-ip>:4401/w
 ```
 
 #### Workspace Address Resolution Strategy
-By default, the Che server will connect to workspace containers according to the 'default' strategy. The order of precedence, Che will use `CHE_DOCKER_IP` if it is set, if not, it will use the address `docker-ip`. If `docker-ip` cannot be determined, it will default to `localhost` for Unix socket connections, and `DOCKER_HOST`. 
+By default, the Che server will connect to workspace containers according to the 'default' strategy. The order of precedence, Che will use `{{site.data.env["DOCKER_IP"]}}` if it is set, if not, it will use the address `docker-ip`. If `docker-ip` cannot be determined, it will default to `localhost` for Unix socket connections, and `{{site.data.env["DOCKER_HOST"]}}`. 
 
-An alternative strategy is available, by setting `CHE_DOCKER_SERVER__EVALUATION__STRATEGY` to 'docker-local'. In this mode, Che will attempt to communicate with workspace containers directly, using `workspace-container-ip`, with `localhost`/`DOCKER_HOST` as a fallback as in the default strategy. This can avoid some issues with ephemeral ports and firewalls (see section 'Firewalls', below), but will cause workspace creation to fail if the Che server is configured to not launch workspaces within the same Docker network.
+An alternative strategy is available, by setting `{{site.data.env["DOCKER_SERVER__EVALUATION__STRATEGY"]}}` to 'docker-local'. In this mode, Che will attempt to communicate with workspace containers directly, using `workspace-container-ip`, with `localhost`/`{{site.data.env["DOCKER_HOST"]}}` as a fallback as in the default strategy. This can avoid some issues with ephemeral ports and firewalls (see section 'Firewalls', below), but will cause workspace creation to fail if the Che server is configured to not launch workspaces within the same Docker network.
 
 ## Docker Connectivity
 There are multiple techniques for connecting to Docker including Unix sockets, localhost, and remote connections over TCP protocol. Depending upon the type of connection you require and the location of the machine node running Docker, we use different parameters.

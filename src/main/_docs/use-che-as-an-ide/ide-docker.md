@@ -33,7 +33,7 @@ DOCKER_OPTS=" -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock"
 Verify that the Docker API is responding at: http://$IP:2375/containers/json
 ```
 
-Second, export `DOCKER_HOST` variable in your workspace. You can do this in the terminal or make it permanent by adding `ENV DOCKER_HOST=tcp://$IP:2375` to a workspace recipe, where `$IP` is your local machine IP.   
+Second, export `{{site.data.env["DOCKER_HOST"]}}` variable in your workspace. You can do this in the terminal or make it permanent by adding `ENV {{site.data.env["DOCKER_HOST"]}}=tcp://$IP:2375` to a workspace recipe, where `$IP` is your local machine IP.   
 
 ## Add Docker CLI to Your Workspace
 There are many ways to do this. If you are in the terminal, you can follow the instructions to install Docker on the command line at [Docker's web site](https://docs.docker.com/engine/installation/).  You can also have your workspace be created from a stack that already includes the Docker CLI.

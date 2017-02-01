@@ -75,7 +75,7 @@ docker run eclipse/che
 docker run <DOCKER_OPTIONS> -v /c/Users/tyler/che:/data eclipse/che start
 
 # If Che will be accessed from other machines add your server's external IP
-docker run <DOCKER_OPTIONS> -e CHE_HOST=<your-ip> eclipse/che start
+docker run <DOCKER_OPTIONS> -e {{site.data.env["HOST"]}}=<your-ip> eclipse/che start
 ```
 
 # Develop with Che  
@@ -99,7 +99,7 @@ MANDATORY DOCKER PARAMETERS:
   -v <LOCAL_PATH>:/data                Where user, instance, and log data saved
 
 OPTIONAL DOCKER PARAMETERS:
-  -e CHE_HOST=<YOUR_HOST>              IP address or hostname where che will serve its users
+  -e {{site.data.env["HOST"]}}=<YOUR_HOST>              IP address or hostname where che will serve its users
   -e CHE_PORT=<YOUR_PORT>              Port where che will bind itself to
   -v <LOCAL_PATH>:/data/instance       Where instance, user, log data will be saved
   -v <LOCAL_PATH>:/data/backup         Where backup files will be saved
@@ -214,14 +214,14 @@ docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock
 ```
 
 # Hosting
-If you are hosting Che at a cloud service like DigitalOcean, or [Bitnami]({{base}}{{site.links["setup-bitnami"]}})  `CHE_HOST` must be set to the server's IP address or its DNS.
+If you are hosting Che at a cloud service like DigitalOcean, or [Bitnami]({{base}}{{site.links["setup-bitnami"]}})  `{{site.data.env["HOST"]}}` must be set to the server's IP address or its DNS.
 
-We will attempt to auto-set `CHE_HOST` by running an internal utility `docker run --net=host eclipse/che-ip:nightly`. This approach is not fool-proof. This utility is usually accurate on desktops, but usually fails on hosted servers. You can explicitly set this value to the IP address of your server:
+We will attempt to auto-set `{{site.data.env["HOST"]}}` by running an internal utility `docker run --net=host eclipse/che-ip:nightly`. This approach is not fool-proof. This utility is usually accurate on desktops, but usually fails on hosted servers. You can explicitly set this value to the IP address of your server:
 
 ```
 docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock
                     -v <local-path>:/data
-                    -e CHE_HOST=<your-ip-or-host>
+                    -e {{site.data.env["HOST"]}}=<your-ip-or-host>
                        eclipse/che:<version> [COMMAND]
 ```
 
@@ -235,17 +235,17 @@ Before starting Che, configure [Docker's daemon for proxy access](https://docs.d
 
 Please be mindful that your `HTTP_PROXY` and/or `HTTPS_PROXY` that you set in the Docker daemon must have a protocol and port number. Proxy configuration is quite finnicky, so please be mindful of providing a fully qualified proxy location.
 
-If you configure `HTTP_PROXY` or `HTTPS_PROXY` in your Docker daemon, we will add `localhost,127.0.0.1,CHE_HOST` to your `NO_PROXY` value where `CHE_HOST` is the DNS or IP address. We recommend that you add the short and long form DNS entry to your Docker's `NO_PROXY` setting if it is not already set.
+If you configure `HTTP_PROXY` or `HTTPS_PROXY` in your Docker daemon, we will add `localhost,127.0.0.1,{{site.data.env["HOST"]}}` to your `NO_PROXY` value where `{{site.data.env["HOST"]}}` is the DNS or IP address. We recommend that you add the short and long form DNS entry to your Docker's `NO_PROXY` setting if it is not already set.
 
 We will add some values to `che.env` that contain some proxy overrides. You can optionally modify these with overrides:
 
 ```
-CHE_HTTP_PROXY=<YOUR_PROXY_FROM_DOCKER>
-CHE_HTTPS_PROXY=<YOUR_PROXY_FROM_DOCKER>
-CHE_NO_PROXY=localhost,127.0.0.1,<YOUR_CHE_HOST>
-CHE_HTTP_PROXY_FOR_WORKSPACES=<YOUR_PROXY_FROM_DOCKER>
-CHE_HTTPS_PROXY_FOR_WORKSPACES=<YOUR_PROXY_FROM_DOCKER>
-CHE_NO_PROXY_FOR_WORKSPACES=localhost,127.0.0.1,<YOUR_CHE_HOST>
+{{site.data.env["HTTP_PROXY"]}}=<YOUR_PROXY_FROM_DOCKER>
+{{site.data.env["HTTPS_PROXY"]}}=<YOUR_PROXY_FROM_DOCKER>
+{{site.data.env["NO_PROXY"]}}=localhost,127.0.0.1,<YOUR_{{site.data.env["HOST"]}}>
+{{site.data.env["HTTP_PROXY"]}}_FOR_WORKSPACES=<YOUR_PROXY_FROM_DOCKER>
+{{site.data.env["HTTPS_PROXY"]}}_FOR_WORKSPACES=<YOUR_PROXY_FROM_DOCKER>
+{{site.data.env["NO_PROXY"]}}_FOR_WORKSPACES=localhost,127.0.0.1,<YOUR_{{site.data.env["HOST"]}}>
 ```
 
 The last three entries are injected into workspaces created by your users. This gives your users access to the Internet from within their workspaces. You can comment out these entries to disable access. However, if that access is turned off, then the default templates with source code will fail to be created in workspaces as those projects are cloned from GitHub.com. Your workspaces are still functional, we just prevent the template cloning.
